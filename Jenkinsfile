@@ -47,8 +47,8 @@ pipeline {
                     echo "$ALLURE_SHA256  $allure_archive" | sha256sum --check --strict
 
                     rm -rf "$TOOLS_DIR/chrome-linux64" "$TOOLS_DIR/chromedriver-linux64" "$TOOLS_DIR/allure-$ALLURE_VERSION"
-                    unzip -q -o "$chrome_archive" -d "$TOOLS_DIR"
-                    unzip -q -o "$chromedriver_archive" -d "$TOOLS_DIR"
+                    (cd "$TOOLS_DIR" && jar xf "$chrome_archive")
+                    (cd "$TOOLS_DIR" && jar xf "$chromedriver_archive")
                     tar -xzf "$allure_archive" -C "$TOOLS_DIR"
                     chmod +x "$CHROME_PATH" "$CHROMEDRIVER_PATH" "$ALLURE_BIN"
 
