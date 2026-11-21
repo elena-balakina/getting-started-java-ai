@@ -274,7 +274,7 @@ gradle test --tests SearchTests.successfulSearchTest --rerun-tasks --console=pla
 
 - [x] Jenkins доступен по `https://jenkins.qa.guru/`; выбран Multibranch Pipeline и label `js-node24-jenkins-warm-agent-1`.
 - [x] На первом агенте `java-jdk21` были подтверждены Debian GNU/Linux 13 x86_64 и Java 21.0.13, но не хватало библиотек Chrome. На warm-агенте `js-node24-jenkins-warm-agent-1` подтверждены Java 21.0.12 и Node 24.11.1; Chrome и ChromeDriver отсутствуют, Allure 3.14.3 не используется. Runtime-загрузка Chrome ранее проходила, но запуск блокировался отсутствием `libglib-2.0.so.0`; выбран удалённый Selenoid WebDriver, где Chrome slots доступны.
-- [x] Параметры тестов оставлены по умолчанию: Chrome, `1920x1080`, headless, `https://github.com`. Для Telegram предусмотрены credentials IDs `telegram-bot-token` и `telegram-chat-id`; отправка отключена до настройки Jenkins job.
+- [x] Параметры тестов оставлены по умолчанию: Chrome, `1920x1080`, headless, `https://github.com`. Для Selenoid создан Jenkins credential ID `selenoid-qa-guru`; для Telegram предусмотрены credentials IDs `telegram-bot-token` и `telegram-chat-id`, отправка отключена до настройки Jenkins job.
 - [x] Выбран pinned Allure Report 2 CLI 2.46.1 с проверкой SHA-256; Jenkins plugin не требуется.
 
 ### Реализация и проверка

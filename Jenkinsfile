@@ -67,15 +67,23 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh '''
-                            ./gradlew test --console=plain \\
-                              -DbaseUrl=https://github.com \\
-                              -Dbrowser=chrome \\
-                              -DbrowserSize=1920x1080 \\
-                              -Dheadless=true \\
-                              "-Dselenide.remote=$SELENOID_URL" \\
-                              "-Dselenide.browserVersion=$BROWSER_VERSION"
-                        '''
+                        withCredentials([
+                            usernamePassword(
+                                credentialsId: 'selenoid-qa-guru',
+                                usernameVariable: 'SELENOID_USER',
+                                passwordVariable: 'SELENOID_PASSWORD'
+                            )
+                        ]) {
+                            sh '''
+                                ./gradlew test --console=plain \\
+                                  -DbaseUrl=https://github.com \\
+                                  -Dbrowser=chrome \\
+                                  -DbrowserSize=1920x1080 \\
+                                  -Dheadless=true \\
+                                  "-Dselenide.remote=https://${SELENOID_USER}:${SELENOID_PASSWORD}@selenoid.qa.guru/wd/hub" \\
+                                  "-Dselenide.browserVersion=$BROWSER_VERSION"
+                            '''
+                        }
                         env.TEST_OUTCOME = 'success'
                     } catch (error) {
                         env.TEST_OUTCOME = 'failure'
