@@ -1,6 +1,7 @@
 name: UI tests
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       browser:
@@ -40,8 +41,8 @@ jobs:
 
       - name: Validate inputs
         env:
-          BROWSER: ${{ inputs.browser }}
-          BROWSER_SIZE: ${{ inputs.browserSize }}
+          BROWSER: ${{ inputs.browser || 'chrome' }}
+          BROWSER_SIZE: ${{ inputs.browserSize || '1920x1080' }}
         run: |
           if [[ "$BROWSER" != "chrome" ]]; then
             echo "::error::Unsupported browser: only chrome is installed in CI"
@@ -129,8 +130,8 @@ jobs:
       - name: Run UI tests
         id: tests
         env:
-          BROWSER: ${{ inputs.browser }}
-          BROWSER_SIZE: ${{ inputs.browserSize }}
+          BROWSER: ${{ inputs.browser || 'chrome' }}
+          BROWSER_SIZE: ${{ inputs.browserSize || '1920x1080' }}
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           CHROMEDRIVER_PATH: ${{ steps.chrome.outputs.chromedriver-path }}
         run: >-
@@ -187,6 +188,32 @@ jobs:
         with:
           path: build/allure-report
           retention-days: 14
+
+      - name: Telegram notification
+        if: ${{ always() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_NOTIFICATIONS_ENABLED: ${{ vars.TELEGRAM_NOTIFICATIONS_ENABLED }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          send_args=()
+          if [[ "$TELEGRAM_NOTIFICATIONS_ENABLED" == "true" ]]; then
+            send_args+=(--send)
+          fi
+          python3 scripts/telegram_notify.py \
+            --xml-dir build/test-results/test \
+            --project "${{ github.repository }}" \
+            --ci "GitHub Actions" \
+            --branch "${{ github.ref_name }}" \
+            --commit "${{ github.sha }}" \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --compile-outcome "$COMPILE_OUTCOME" \
+            --test-outcome "$TEST_OUTCOME" \
+            --job-status "$JOB_STATUS" \
+            "${send_args[@]}"
 
   deploy-report:
     needs: ui-tests
