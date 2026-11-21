@@ -188,6 +188,32 @@ jobs:
           path: build/allure-report
           retention-days: 14
 
+      - name: Telegram notification
+        if: ${{ always() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_NOTIFICATIONS_ENABLED: ${{ vars.TELEGRAM_NOTIFICATIONS_ENABLED }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          send_args=()
+          if [[ "$TELEGRAM_NOTIFICATIONS_ENABLED" == "true" ]]; then
+            send_args+=(--send)
+          fi
+          python3 scripts/telegram_notify.py \
+            --xml-dir build/test-results/test \
+            --project "${{ github.repository }}" \
+            --ci "GitHub Actions" \
+            --branch "${{ github.ref_name }}" \
+            --commit "${{ github.sha }}" \
+            --run-url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --compile-outcome "$COMPILE_OUTCOME" \
+            --test-outcome "$TEST_OUTCOME" \
+            --job-status "$JOB_STATUS" \
+            "${send_args[@]}"
+
   deploy-report:
     needs: ui-tests
     if: ${{ !cancelled() && needs.ui-tests.result == 'success' && needs.ui-tests.outputs.report-generated == 'true' && github.ref_name == github.event.repository.default_branch }}
