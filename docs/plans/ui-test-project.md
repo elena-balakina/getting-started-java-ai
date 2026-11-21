@@ -286,7 +286,7 @@ gradle test --tests SearchTests.successfulSearchTest --rerun-tasks --console=pla
 - [x] Плагины не устанавливались и глобальная конфигурация Jenkins не изменялась.
 - [ ] Разделить проверку Jenkinsfile и реальный запуск Jenkins; создать коммит.
 
-Непроверено: запуск Gradle-тестов через Selenoid, генерация и публикация Allure Report 2, JUnit-архивирование, dry-run/отправка Telegram из Jenkins и поведение при падении тестов. Доступность Selenoid и Chrome WebDriver slots подтверждена через status API; реальный тестовый session ещё не запускался.
+Непроверено: запуск Gradle-тестов через Selenoid, генерация и публикация Allure Report 2, JUnit-архивирование, dry-run/отправка Telegram из Jenkins и поведение при падении тестов. Доступность Selenoid и Chrome WebDriver slots подтверждена через status API; реальный тестовый session ещё не запускался. На агенте отсутствует `python3`, а Global credentials `selenoid-username`/`selenoid-password` пока не видны Multibranch job; требуется системное credential-хранилище или folder-scoped credentials.
 
 ## Фаза 8 — Review
 
