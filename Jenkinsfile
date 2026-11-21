@@ -95,7 +95,7 @@ pipeline {
         always {
             sh '''
                 set +e
-                if compgen -G "build/allure-results/*-result.json" > /dev/null; then
+                if find build/allure-results -type f -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
                     "$ALLURE_BIN" generate build/allure-results --clean -o build/allure-report
                 else
                     echo 'No Allure test results; report generation skipped'
@@ -128,7 +128,9 @@ pipeline {
                       ${sendFlag}
                 """
 
-                if (env.TELEGRAM_NOTIFICATIONS_ENABLED == 'true') {
+                if (sh(returnStatus: true, script: 'command -v python3 >/dev/null 2>&1') != 0) {
+                    echo 'Python 3 is not installed on this agent; Telegram notification skipped'
+                } else if (env.TELEGRAM_NOTIFICATIONS_ENABLED == 'true') {
                     withCredentials([
                         string(credentialsId: 'telegram-bot-token', variable: 'TELEGRAM_BOT_TOKEN'),
                         string(credentialsId: 'telegram-chat-id', variable: 'TELEGRAM_CHAT_ID')
