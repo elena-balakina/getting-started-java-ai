@@ -68,11 +68,8 @@ pipeline {
                 script {
                     try {
                         withCredentials([
-                            usernamePassword(
-                                credentialsId: 'selenoid-qa-guru',
-                                usernameVariable: 'SELENOID_USER',
-                                passwordVariable: 'SELENOID_PASSWORD'
-                            )
+                            string(credentialsId: 'selenoid-username', variable: 'SELENOID_USER'),
+                            string(credentialsId: 'selenoid-password', variable: 'SELENOID_PASSWORD')
                         ]) {
                             sh '''
                                 ./gradlew test --console=plain \\
