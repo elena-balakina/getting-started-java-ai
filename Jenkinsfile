@@ -73,8 +73,8 @@ pipeline {
                               -Dbrowser=chrome \\
                               -DbrowserSize=1920x1080 \\
                               -Dheadless=true \\
-                              "-Dremote=$SELENOID_URL" \\
-                              "-DbrowserVersion=$BROWSER_VERSION"
+                              "-Dselenide.remote=$SELENOID_URL" \\
+                              "-Dselenide.browserVersion=$BROWSER_VERSION"
                         '''
                         env.TEST_OUTCOME = 'success'
                     } catch (error) {
