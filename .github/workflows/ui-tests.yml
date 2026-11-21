@@ -41,8 +41,8 @@ jobs:
 
       - name: Validate inputs
         env:
-          BROWSER: ${{ inputs.browser }}
-          BROWSER_SIZE: ${{ inputs.browserSize }}
+          BROWSER: ${{ inputs.browser || 'chrome' }}
+          BROWSER_SIZE: ${{ inputs.browserSize || '1920x1080' }}
         run: |
           if [[ "$BROWSER" != "chrome" ]]; then
             echo "::error::Unsupported browser: only chrome is installed in CI"
@@ -130,8 +130,8 @@ jobs:
       - name: Run UI tests
         id: tests
         env:
-          BROWSER: ${{ inputs.browser }}
-          BROWSER_SIZE: ${{ inputs.browserSize }}
+          BROWSER: ${{ inputs.browser || 'chrome' }}
+          BROWSER_SIZE: ${{ inputs.browserSize || '1920x1080' }}
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           CHROMEDRIVER_PATH: ${{ steps.chrome.outputs.chromedriver-path }}
         run: >-
