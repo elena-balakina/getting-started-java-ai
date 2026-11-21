@@ -273,7 +273,7 @@ gradle test --tests SearchTests.successfulSearchTest --rerun-tasks --console=pla
 ### Перед реализацией уточнить
 
 - [x] Jenkins доступен по `https://jenkins.qa.guru/`; выбран Multibranch Pipeline и label `js-node24-jenkins-warm-agent-1`.
-- [x] На первом агенте `java-jdk21` были подтверждены Debian GNU/Linux 13 x86_64 и Java 21.0.13, но не хватало библиотек Chrome. На выбранном warm-агенте подтверждены Java 21.0.12 и Node 24.11.1; Chrome, ChromeDriver и Playwright-браузеры в PATH/workspace не обнаружены, Allure 3.14.3 не используется.
+- [x] На первом агенте `java-jdk21` были подтверждены Debian GNU/Linux 13 x86_64 и Java 21.0.13, но не хватало библиотек Chrome. На warm-агенте `js-node24-jenkins-warm-agent-1` подтверждены Java 21.0.12 и Node 24.11.1; Chrome и ChromeDriver отсутствуют, Allure 3.14.3 не используется. Runtime-загрузка Chrome проходит, но запуск блокируется отсутствием системной библиотеки `libglib-2.0.so.0`; требуется агент с browser dependencies или согласованная установка пакетов администратором.
 - [x] Параметры тестов оставлены по умолчанию: Chrome, `1920x1080`, headless, `https://github.com`. Для Telegram предусмотрены credentials IDs `telegram-bot-token` и `telegram-chat-id`; отправка отключена до настройки Jenkins job.
 - [x] Выбран pinned Allure Report 2 CLI 2.46.1 с проверкой SHA-256; Jenkins plugin не требуется.
 
@@ -286,7 +286,7 @@ gradle test --tests SearchTests.successfulSearchTest --rerun-tasks --console=pla
 - [x] Плагины не устанавливались и глобальная конфигурация Jenkins не изменялась.
 - [ ] Разделить проверку Jenkinsfile и реальный запуск Jenkins; создать коммит.
 
-Непроверено: создание/сканирование Multibranch Pipeline, загрузка инструментов на агенте, запуск Gradle-тестов, генерация и публикация Allure Report 2, JUnit-архивирование, dry-run/отправка Telegram из Jenkins и поведение при падении тестов.
+Непроверено: запуск Gradle-тестов на агенте с browser dependencies, генерация и публикация Allure Report 2, JUnit-архивирование, dry-run/отправка Telegram из Jenkins и поведение при падении тестов. На выбранном warm-агенте runtime-загрузка и распаковка инструментов проверены, но Chrome не стартует из-за отсутствующих системных библиотек.
 
 ## Фаза 8 — Review
 
