@@ -268,12 +268,12 @@ gradle test --tests SearchTests.successfulSearchTest --rerun-tasks --console=pla
 
 ## Фаза 7 — Jenkins
 
-Статус: Jenkinsfile реализован для Multibranch Pipeline, но реальный запуск и публикация отчёта ещё не подтверждены. Jenkins доступен по адресу `https://jenkins.qa.guru/`; выбран label `java-jdk21`. Проверка инструментов показала Debian GNU/Linux 13 x86_64 и Java 21.0.13, но Chrome и ChromeDriver на агенте отсутствуют, а установленный Allure CLI имеет версию 3.13.0. Поэтому Jenkinsfile скачивает Chrome for Testing, ChromeDriver и Allure Report 2 CLI 2.46.1 в workspace без глобальных изменений Jenkins.
+Статус: Jenkinsfile реализован для Multibranch Pipeline, но реальный запуск и публикация отчёта ещё не подтверждены. Jenkins доступен по адресу `https://jenkins.qa.guru/`; выбран label `js-node24-jenkins-warm-agent-1`. Проверка инструментов показала Debian GNU/Linux 13 x86_64 и Java 21.0.13, но Chrome и ChromeDriver на агенте отсутствуют, а установленный Allure CLI имеет версию 3.13.0. Поэтому Jenkinsfile скачивает Chrome for Testing, ChromeDriver и Allure Report 2 CLI 2.46.1 в workspace без глобальных изменений Jenkins.
 
 ### Перед реализацией уточнить
 
-- [x] Jenkins доступен по `https://jenkins.qa.guru/`; выбран Multibranch Pipeline и label `java-jdk21`.
-- [x] На выбранном агенте подтверждены Debian GNU/Linux 13 x86_64 и Java 21.0.13; Chrome/ChromeDriver отсутствуют, Allure 3.13.0 не используется.
+- [x] Jenkins доступен по `https://jenkins.qa.guru/`; выбран Multibranch Pipeline и label `js-node24-jenkins-warm-agent-1`.
+- [x] На первом агенте `java-jdk21` были подтверждены Debian GNU/Linux 13 x86_64 и Java 21.0.13, но не хватало библиотек Chrome. На выбранном warm-агенте подтверждены Java 21.0.12 и Node 24.11.1; Chrome, ChromeDriver и Playwright-браузеры в PATH/workspace не обнаружены, Allure 3.14.3 не используется.
 - [x] Параметры тестов оставлены по умолчанию: Chrome, `1920x1080`, headless, `https://github.com`. Для Telegram предусмотрены credentials IDs `telegram-bot-token` и `telegram-chat-id`; отправка отключена до настройки Jenkins job.
 - [x] Выбран pinned Allure Report 2 CLI 2.46.1 с проверкой SHA-256; Jenkins plugin не требуется.
 

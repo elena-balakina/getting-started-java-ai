@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'java-jdk21'
+        label 'js-node24-jenkins-warm-agent-1'
     }
 
     options {
