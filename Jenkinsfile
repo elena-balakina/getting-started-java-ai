@@ -10,12 +10,11 @@ pipeline {
     }
 
     environment {
-        CHROME_VERSION = '155.0.8059.84'
+        SELENOID_URL = 'https://selenoid.qa.guru/wd/hub'
+        BROWSER_VERSION = '157.0'
         ALLURE_VERSION = '2.46.1'
         ALLURE_SHA256 = '37428164f310c8d137cfdd2c3a25d049b233261ddab13e1bd4dfd7627b5cbf8d'
         TOOLS_DIR = "${WORKSPACE}/.ci-tools"
-        CHROME_PATH = "${WORKSPACE}/.ci-tools/chrome-linux64/chrome"
-        CHROMEDRIVER_PATH = "${WORKSPACE}/.ci-tools/chromedriver-linux64/chromedriver"
         ALLURE_BIN = "${WORKSPACE}/.ci-tools/allure-2.46.1/bin/allure"
         COMPILE_OUTCOME = 'not_run'
         TEST_OUTCOME = 'not_run'
@@ -34,26 +33,16 @@ pipeline {
                     set -eu
                     mkdir -p "$TOOLS_DIR"
 
-                    chrome_archive="$TOOLS_DIR/chrome-for-testing.zip"
-                    chromedriver_archive="$TOOLS_DIR/chromedriver.zip"
                     allure_archive="$TOOLS_DIR/allure-commandline-$ALLURE_VERSION.tgz"
 
-                    curl -fsSL -o "$chrome_archive" \
-                      "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VERSION/linux64/chrome-linux64.zip"
-                    curl -fsSL -o "$chromedriver_archive" \
-                      "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VERSION/linux64/chromedriver-linux64.zip"
-                    curl -fsSL -o "$allure_archive" \
+                    curl -fsSL -o "$allure_archive" \\
                       "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/$ALLURE_VERSION/allure-commandline-$ALLURE_VERSION.tgz"
                     echo "$ALLURE_SHA256  $allure_archive" | sha256sum --check --strict
 
-                    rm -rf "$TOOLS_DIR/chrome-linux64" "$TOOLS_DIR/chromedriver-linux64" "$TOOLS_DIR/allure-$ALLURE_VERSION"
-                    (cd "$TOOLS_DIR" && jar xf "$chrome_archive")
-                    (cd "$TOOLS_DIR" && jar xf "$chromedriver_archive")
+                    rm -rf "$TOOLS_DIR/allure-$ALLURE_VERSION"
                     tar -xzf "$allure_archive" -C "$TOOLS_DIR"
-                    chmod +x "$CHROME_PATH" "$CHROMEDRIVER_PATH" "$ALLURE_BIN"
+                    chmod +x "$ALLURE_BIN"
 
-                    "$CHROME_PATH" --version
-                    "$CHROMEDRIVER_PATH" --version
                     allure_version=$("$ALLURE_BIN" --version)
                     test "$allure_version" = "$ALLURE_VERSION"
                 '''
@@ -84,8 +73,8 @@ pipeline {
                               -Dbrowser=chrome \\
                               -DbrowserSize=1920x1080 \\
                               -Dheadless=true \\
-                              "-Dselenide.browserBinary=$CHROME_PATH" \\
-                              "-Dwebdriver.chrome.driver=$CHROMEDRIVER_PATH"
+                              "-Dremote=$SELENOID_URL" \\
+                              "-DbrowserVersion=$BROWSER_VERSION"
                         '''
                         env.TEST_OUTCOME = 'success'
                     } catch (error) {
